@@ -1,30 +1,38 @@
-#!/usr/bin/env bash
-# File: guessinggame.sh
-
-dirarray=($(ls -d */))
-dircount=${#dirarray[@]}
-dirguess=0
-
-function checkguess {
-    #usage of an if statement
-    if [[$1 -lt $2]]
-    then
-    echo "echo Too low"
-    elif [[$1 -gt $2]]
-    then
-    echo "echo Too high"
-    fi
+# This function returns "high" or "low" as a text response 
+# to the user's guess and actual file count comparison.
+function highorlow {
+  actual_fn=$1
+  response_fn=$2
+  if [[ $actual_fn < $response_fn ]]
+  then
+    echo "high"
+  else 
+    echo "low"
+  fi
 }
-
-# usage of a loop
-
-while [ $dirguess -ne $dircount ]
+# Start of program.
+echo ""
+echo "Welcome to guessing game!"
+echo ""
+actual=$(dir | wc -w)
+response=$actual-1
+echo "How many files do you think are in this directory? "
+echo ""
+read response
+while [[ $response != $actual ]]
 do
-echo "Guess the number of directories!"
-#collecting user response
-read dirguess
-
-$(checkguess $dirguess $dircount)
-
+  error=$(highorlow $actual $response)
+  if [[ $response != $actual ]]
+  then
+    echo ""
+    echo "Nope, your guess is too $error!"
+    echo ""
+    echo "Now how many files do you think are in this directory?"
+    echo ""
+    read response
+  fi
 done
-echo "You got it right! congrats!"
+echo ""
+echo "You're right!  There are $actual files in this directory!"
+echo ""
+echo "congrats!"
